@@ -4,7 +4,6 @@ export {
   XRiftProvider,
   useXRift,
   type XRiftContextValue,
-  type InteractableObject,
 } from './contexts/XRiftContext'
 
 // Components

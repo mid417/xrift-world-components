@@ -1,6 +1,6 @@
-import { useEffect, useRef, type FC } from 'react'
 import { Outlines } from '@react-three/drei'
-import type { Group, Object3D } from 'three'
+import { Children, cloneElement, isValidElement, useCallback, useEffect, useRef, type FC } from 'react'
+import type { Group } from 'three'
 import { useXRift } from '../../contexts/XRiftContext'
 import type { Props } from './types'
 
@@ -8,64 +8,88 @@ const INTERACTABLE_LAYER = 10
 
 export const Interactable: FC<Props> = ({
   id,
+  type = 'button',
   onInteract,
-  interactionText = 'クリックする',
+  interactionText,
   enabled = true,
   children,
 }) => {
-  const { registerInteractable, unregisterInteractable } = useXRift()
+  const { currentTarget } = useXRift()
   const groupRef = useRef<Group>(null)
 
-  // インタラクタブルオブジェクトとして登録
-  useEffect(() => {
-    if (!enabled) return
+  const handleInteract = useCallback((objectId: string) => {
+    onInteract(objectId)
+  }, [onInteract])
 
-    registerInteractable({
+  // userDataにインタラクション情報を設定 & レイヤー設定
+  useEffect(() => {
+    const object = groupRef.current
+    if (!object) return
+
+    // userDataにインタラクション情報を設定
+    const interactableData = {
       id,
-      type: 'button',
+      type,
+      onInteract: handleInteract,
       interactionText,
-      onInteract: () => onInteract(id),
-    })
-
-    return () => {
-      unregisterInteractable(id)
+      enabled,
     }
-  }, [id, enabled, interactionText, onInteract, registerInteractable, unregisterInteractable])
 
-  // レイヤーを設定
-  useEffect(() => {
-    if (!groupRef.current || !enabled) return
+    Object.assign(object.userData, interactableData)
 
-    groupRef.current.traverse((object: Object3D) => {
-      if ('layers' in object) {
-        object.layers.enable(INTERACTABLE_LAYER)
-      }
+    // レイヤーを設定（レイキャスト最適化のため）
+    object.traverse((child) => {
+      child.layers.enable(INTERACTABLE_LAYER)
     })
-  }, [enabled])
+
+    // クリーンアップ: userDataからインタラクション情報を削除
+    return () => {
+      if (object.userData) {
+        delete object.userData.id
+        delete object.userData.type
+        delete object.userData.onInteract
+        delete object.userData.interactionText
+        delete object.userData.enabled
+      }
+
+      // レイヤーを無効化
+      object.traverse((child) => {
+        child.layers.disable(INTERACTABLE_LAYER)
+      })
+    }
+  }, [id, type, handleInteract, interactionText, enabled])
+
+  // 現在のターゲットかどうかで視覚的フィードバックを提供
+  const isTargeted = currentTarget !== null && currentTarget.uuid === groupRef.current?.uuid
+
+  // 子要素（mesh）に<Outlines>を追加
+  const childrenWithOutlines = Children.map(children, (child) => {
+    if (!isValidElement(child)) return child
+
+    // meshの子要素として<Outlines>を追加
+    return cloneElement(child, {
+      children: (
+        <>
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          {(child.props as any).children}
+          {isTargeted && enabled && (
+            <Outlines
+              thickness={5}
+              color="#4dabf7"
+              screenspace={false}
+              opacity={1}
+              transparent={false}
+              angle={Math.PI}
+            />
+          )}
+        </>
+      ),
+    } as never)
+  })
 
   return (
-    <group
-      ref={groupRef}
-      onPointerOver={(e) => {
-        if (!enabled) return
-        e.stopPropagation()
-        document.body.style.cursor = 'pointer'
-      }}
-      onPointerOut={(e) => {
-        if (!enabled) return
-        e.stopPropagation()
-        document.body.style.cursor = 'auto'
-      }}
-    >
-      {children}
-      {enabled && (
-        <Outlines
-          thickness={0.05}
-          color="yellow"
-          transparent
-          opacity={0.8}
-        />
-      )}
+    <group ref={groupRef}>
+      {childrenWithOutlines}
     </group>
   )
 }

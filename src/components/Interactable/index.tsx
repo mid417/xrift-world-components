@@ -1,5 +1,5 @@
 import { Outlines } from '@react-three/drei'
-import { Children, cloneElement, isValidElement, useEffect, useRef, type FC } from 'react'
+import { Children, cloneElement, isValidElement, useEffect, useMemo, useRef, type FC } from 'react'
 import type { Group } from 'three'
 import { useXRift } from '../../contexts/XRiftContext'
 import type { Props } from './types'
@@ -59,53 +59,53 @@ export const Interactable: FC<Props> = ({
   const isTargeted = currentTarget !== null && currentTarget.uuid === groupRef.current?.uuid
 
   // 再帰的に子要素を探索して、すべての<mesh>に<Outlines>を追加する関数
-  const addOutlinesToMeshes = (child: React.ReactNode): React.ReactNode => {
-    if (!isValidElement(child)) return child
+  // useMemoを使用して、isTargetedとenabledが変更された時のみ再計算する
+  const childrenWithOutlines = useMemo(() => {
+    const addOutlinesToMeshes = (child: React.ReactNode): React.ReactNode => {
+      if (!isValidElement(child)) return child
 
-    // 子要素のtypeをチェック（meshかどうか）
-    const childType = child.type
-    const isMesh = typeof childType === 'string' && childType === 'mesh'
+      // 子要素のtypeをチェック（meshかどうか）
+      const childType = child.type
+      const isMesh = typeof childType === 'string' && childType === 'mesh'
 
-    // meshの場合、Outlinesを子要素として追加
-    if (isMesh) {
-      return cloneElement(child, {
-        children: (
-          <>
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-            {(child.props as any).children}
-            {isTargeted && enabled && (
-              <Outlines
-                thickness={5}
-                color="#4dabf7"
-                screenspace={false}
-                opacity={1}
-                transparent={false}
-                angle={Math.PI}
-              />
-            )}
-          </>
-        ),
-      } as never)
+      // meshの場合、Outlinesを子要素として追加
+      if (isMesh) {
+        return cloneElement(child, {
+          children: (
+            <>
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {(child.props as any).children}
+              {isTargeted && enabled && (
+                <Outlines
+                  thickness={5}
+                  color="#4dabf7"
+                  screenspace={false}
+                  opacity={1}
+                  transparent={false}
+                  angle={Math.PI}
+                />
+              )}
+            </>
+          ),
+        } as never)
+      }
+
+      // mesh以外の場合、子要素を再帰的に処理
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const grandChildren = (child.props as any).children
+      if (grandChildren) {
+        return cloneElement(child, {
+          children: Children.map(grandChildren, (grandChild) =>
+            addOutlinesToMeshes(grandChild)
+          ),
+        } as never)
+      }
+
+      return child
     }
 
-    // mesh以外の場合、子要素を再帰的に処理
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const grandChildren = (child.props as any).children
-    if (grandChildren) {
-      return cloneElement(child, {
-        children: Children.map(grandChildren, (grandChild) =>
-          addOutlinesToMeshes(grandChild)
-        ),
-      } as never)
-    }
-
-    return child
-  }
-
-  // 子要素（mesh）に<Outlines>を追加
-  const childrenWithOutlines = Children.map(children, (child) =>
-    addOutlinesToMeshes(child)
-  )
+    return Children.map(children, (child) => addOutlinesToMeshes(child))
+  }, [children, isTargeted, enabled])
 
   return (
     <group ref={groupRef}>

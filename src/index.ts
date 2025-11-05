@@ -5,3 +5,9 @@ export {
   useXRift,
   type XRiftContextValue,
 } from './contexts/XRiftContext'
+
+// Components
+export {
+  Interactable,
+  type InteractableProps,
+} from './components/Interactable'

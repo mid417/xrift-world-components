@@ -1,4 +1,5 @@
 import { createContext, type ReactNode, useContext } from 'react'
+import type { Object3D } from 'three'
 
 export interface XRiftContextValue {
   /**
@@ -6,6 +7,11 @@ export interface XRiftContextValue {
    * 例: 'https://assets.xrift.net/users/xxx/worlds/yyy/hash123/'
    */
   baseUrl: string
+  /**
+   * 現在レイキャストでターゲットされているオブジェクト
+   * xrift-frontend側のRaycastDetectorが設定する
+   */
+  currentTarget: Object3D | null
   // 将来的に追加可能な値
   // worldId?: string
   // instanceId?: string
@@ -20,6 +26,7 @@ export const XRiftContext = createContext<XRiftContextValue | null>(null)
 
 interface Props {
   baseUrl: string
+  currentTarget?: Object3D | null
   children: ReactNode
 }
 
@@ -28,9 +35,14 @@ interface Props {
  * Module Federationで動的にロードされたワールドコンポーネントに
  * 必要な情報を注入するために使用
  */
-export const XRiftProvider = ({ baseUrl, children }: Props) => {
+export const XRiftProvider = ({ baseUrl, currentTarget = null, children }: Props) => {
   return (
-    <XRiftContext.Provider value={{ baseUrl }}>
+    <XRiftContext.Provider
+      value={{
+        baseUrl,
+        currentTarget,
+      }}
+    >
       {children}
     </XRiftContext.Provider>
   )

@@ -224,6 +224,30 @@ function MyWorld() {
 | `url` | `string` | - | `''` | 動画のURL |
 | `playing` | `boolean` | - | `true` | 再生中かどうか |
 | `currentTime` | `number` | - | `0` | 再生位置（秒） |
+| `sync` | `'global' \| 'local'` | - | `'global'` | 同期モード: `global` = インスタンス全体で同期, `local` = ローカルのみ |
+
+#### 同期モード
+
+VideoScreenは2つの同期モードをサポートしています：
+
+- **`sync="global"`（デフォルト）**: インスタンス内の全ユーザーで動画の状態が同期されます。シアターのメインスクリーンなど、全員で同じ動画を見る場合に使用します。
+- **`sync="local"`**: ローカルのみで動作し、他のユーザーとは同期されません。個人用モニターなど、各ユーザーが別々の動画を見る場合に使用します。
+
+```tsx
+// グローバル同期（デフォルト）
+<VideoScreen
+  id="theater-screen"
+  url="https://example.com/movie.mp4"
+  sync="global"
+/>
+
+// ローカルのみ
+<VideoScreen
+  id="personal-monitor"
+  url="https://example.com/video.mp4"
+  sync="local"
+/>
+```
 
 #### 状態管理
 

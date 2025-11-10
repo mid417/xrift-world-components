@@ -13,6 +13,8 @@ export interface VideoScreenProps {
   playing?: boolean
   /** 再生位置（秒） */
   currentTime?: number
+  /** 同期モード: "global" = インスタンス全体で同期, "local" = ローカルのみ（デフォルト: "global"） */
+  sync?: 'global' | 'local'
 }
 
 /**

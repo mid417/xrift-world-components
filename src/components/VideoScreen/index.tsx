@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useRef } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { useVideoTexture } from '@react-three/drei'
 import { useInstanceState } from '../../hooks/useInstanceState'
 import { VideoScreenProps, VideoState } from './types'
@@ -17,9 +17,10 @@ function VideoScreenInner({
   url = '',
   playing = true,
   currentTime = 0,
+  sync = 'global',
 }: VideoScreenProps) {
-  // useInstanceStateで状態を自動同期
-  const [videoState, setVideoState] = useInstanceState<VideoState>(
+  // グローバル同期用の状態
+  const [globalState, setGlobalState] = useInstanceState<VideoState>(
     `video-${id}`,
     {
       url: url,
@@ -29,7 +30,19 @@ function VideoScreenInner({
     }
   )
 
-  // propsが変更されたら、useInstanceStateの状態も更新
+  // ローカル専用の状態
+  const [localState, setLocalState] = useState<VideoState>({
+    url: url,
+    isPlaying: playing,
+    currentTime: currentTime,
+    serverTime: Date.now(),
+  })
+
+  // sync modeに応じて使用する状態を切り替え
+  const videoState = sync === 'global' ? globalState : localState
+  const setVideoState = sync === 'global' ? setGlobalState : setLocalState
+
+  // propsが変更されたら、状態も更新
   // serverTimeは毎回Date.now()で変わってしまうので、本当に変更があった時だけ更新
   useEffect(() => {
     if (

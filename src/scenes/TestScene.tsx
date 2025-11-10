@@ -24,12 +24,22 @@ export function TestScene() {
         <meshStandardMaterial color="#cccccc" />
       </mesh>
 
-      {/* メインスクリーン（中央） */}
+      {/* メインスクリーン（中央）- グローバル同期 */}
       <VideoScreen
         id="main-screen"
         position={[0, 2, -5]}
         scale={[16 / 9 * 3, 3]}
         url="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        sync="global"
+      />
+
+      {/* サブスクリーン（右）- ローカルのみ */}
+      <VideoScreen
+        id="sub-screen"
+        position={[5, 1.5, -3]}
+        scale={[16 / 9 * 1.5, 1.5]}
+        url="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        sync="local"
       />
 
       {/* 鏡（左） */}

@@ -18,5 +18,7 @@ export {
   type InteractableProps,
 } from './components/Interactable'
 
+export { Mirror, type MirrorProps } from './components/Mirror'
+
 // Hooks
 export { useInstanceState } from './hooks/useInstanceState'

@@ -138,6 +138,52 @@ function MyWorld() {
 | `enabled` | `boolean` | - | `true` | インタラクション可能かどうか |
 | `children` | `ReactNode` | ✓ | - | 3Dオブジェクト |
 
+### Mirror コンポーネント
+
+リアルタイムで周囲を反射する鏡のコンポーネントです。
+
+```tsx
+import { Mirror } from '@xrift/world-components'
+
+function MyWorld() {
+  return (
+    <>
+      {/* 基本的な使い方 */}
+      <Mirror position={[0, 2.5, -5]} size={[4, 3]} />
+
+      {/* 高解像度の鏡 */}
+      <Mirror
+        position={[5, 2.5, -5]}
+        size={[3, 3]}
+        textureResolution={1024}
+      />
+
+      {/* 金色の鏡 */}
+      <Mirror
+        position={[-5, 2.5, -5]}
+        size={[2, 4]}
+        color={0xffd700}
+      />
+    </>
+  )
+}
+```
+
+#### Props
+
+| プロパティ | 型 | 必須 | デフォルト | 説明 |
+|-----------|-----|------|-----------|------|
+| `position` | `[number, number, number]` | - | `[0, 2.5, -9]` | 鏡の位置 |
+| `rotation` | `[number, number, number]` | - | `[0, 0, 0]` | 鏡の回転 |
+| `size` | `[number, number]` | - | `[8, 5]` | 鏡のサイズ [幅, 高さ] |
+| `color` | `number` | - | `0xcccccc` | 反射の色（16進数カラー） |
+| `textureResolution` | `number` | - | `512` | 反射テクスチャの解像度。sizeの比率に応じて自動調整されます |
+
+#### 注意事項
+
+- 物理コライダーは含まれていません。必要な場合は`@react-three/rapier`などを使って別途追加してください
+- Meta Quest（Android Chrome）での互換性のため、マルチサンプリングは無効化されています
+
 ## 開発
 
 ```bash

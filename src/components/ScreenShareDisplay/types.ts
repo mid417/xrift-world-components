@@ -8,20 +8,6 @@ export interface Props {
   /** スクリーンのサイズ [幅, 高さ] */
   scale?: [number, number]
 
-  // ---- 映像ソース ----
-  /** 表示する映像のvideo要素 */
-  videoElement?: HTMLVideoElement | null
-
-  // ---- インタラクション状態 ----
-  /** 自分が共有中か */
-  isSharing?: boolean
-  /** 共有開始可能か */
-  canStartShare?: boolean
-  /** 共有開始コールバック */
-  onStartShare?: () => void
-  /** 共有停止コールバック */
-  onStopShare?: () => void
-
   // ---- インタラクション制御 ----
   /** インタラクション有効化（デフォルト: true） */
   interactable?: boolean

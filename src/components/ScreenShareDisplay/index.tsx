@@ -36,15 +36,13 @@ export const ScreenShareDisplay = memo((props: Props) => {
     interactable = true,
   } = props
 
-  // Context から値を取得（Provider がない場合は null）
+  // Context から値を取得
   const context = useScreenShareContext()
-
-  // props があれば props、なければ Context から取得
-  const videoElement = props.videoElement ?? context?.videoElement ?? null
-  const isSharing = props.isSharing ?? context?.isSharing ?? false
-  const canStartShare = props.canStartShare ?? context?.canStartShare ?? false
-  const onStartShare = props.onStartShare ?? context?.startScreenShare ?? NOOP
-  const onStopShare = props.onStopShare ?? context?.stopScreenShare ?? NOOP
+  const videoElement = context?.videoElement ?? null
+  const isSharing = context?.isSharing ?? false
+  const canStartShare = context?.canStartShare ?? false
+  const onStartShare = context?.startScreenShare ?? NOOP
+  const onStopShare = context?.stopScreenShare ?? NOOP
 
   const materialRef = useRef<THREE.MeshBasicMaterial>(null)
   const [texture, setTexture] = useState<THREE.VideoTexture | null>(null)

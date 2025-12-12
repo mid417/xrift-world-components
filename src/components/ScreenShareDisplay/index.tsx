@@ -97,20 +97,6 @@ export const ScreenShareDisplay = memo(({
   const interactionText = isSharing ? DEFAULT_STOP_TEXT : DEFAULT_START_TEXT
   const hasVideo = texture !== null
 
-  // スクリーンのメッシュ
-  const screenMesh = (
-    <mesh>
-      <planeGeometry args={[scale[0], scale[1]]} />
-      <meshBasicMaterial
-        ref={materialRef}
-        map={texture}
-        side={THREE.FrontSide}
-        toneMapped={false}
-        color={hasVideo ? 'white' : DEFAULT_BG_COLOR}
-      />
-    </mesh>
-  )
-
   return (
     <group position={position} rotation={rotation}>
       <Interactable
@@ -119,7 +105,16 @@ export const ScreenShareDisplay = memo(({
         interactionText={interactionText}
         enabled={isSharing ? !!stopScreenShare : !!startScreenShare}
       >
-        {screenMesh}
+        <mesh>
+          <planeGeometry args={[scale[0], scale[1]]} />
+          <meshBasicMaterial
+            ref={materialRef}
+            map={texture}
+            side={THREE.FrontSide}
+            toneMapped={false}
+            color={hasVideo ? 'white' : DEFAULT_BG_COLOR}
+          />
+        </mesh>
       </Interactable>
 
       {/* ガイドテキスト */}

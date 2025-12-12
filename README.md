@@ -359,6 +359,89 @@ function MyWorld() {
 - ブラウザのautoplay policyのため、動画は初期状態でミュートされています
 - 物理コライダーは含まれていません。必要な場合は別途追加してください
 
+### ScreenShareDisplay コンポーネント
+
+画面共有の映像を3D空間内にスクリーンとして表示するコンポーネントです。`ScreenShareContext` から映像と状態を取得します。
+
+```tsx
+import { ScreenShareDisplay } from '@xrift/world-components'
+
+function MyWorld() {
+  return (
+    <>
+      {/* 基本的な使い方 */}
+      <ScreenShareDisplay id="screen-1" />
+
+      {/* 位置とサイズを指定 */}
+      <ScreenShareDisplay
+        id="screen-2"
+        position={[5, 2, -3]}
+        scale={[3, 3 * (9/16)]}
+      />
+    </>
+  )
+}
+```
+
+#### Props
+
+| プロパティ | 型 | 必須 | デフォルト | 説明 |
+|-----------|-----|------|-----------|------|
+| `id` | `string` | ✓ | - | スクリーンの一意なID |
+| `position` | `[number, number, number]` | - | `[0, 2, -5]` | スクリーンの位置 |
+| `rotation` | `[number, number, number]` | - | `[0, 0, 0]` | スクリーンの回転 |
+| `scale` | `[number, number]` | - | `[4, 4 * (9/16)]` | スクリーンのサイズ [幅, 高さ] |
+
+#### ScreenShareContext
+
+画面共有の状態は `ScreenShareContext` を通じて提供されます。`XRiftProvider` に `screenShareImplementation` を渡すことで設定します。
+
+```tsx
+import { XRiftProvider, ScreenShareDisplay } from '@xrift/world-components'
+
+function App() {
+  const screenShareImpl = {
+    videoElement: myVideoElement,  // HTMLVideoElement
+    isSharing: false,
+    startScreenShare: () => { /* 共有開始処理 */ },
+    stopScreenShare: () => { /* 共有停止処理 */ },
+  }
+
+  return (
+    <XRiftProvider
+      baseUrl="https://..."
+      screenShareImplementation={screenShareImpl}
+    >
+      <MyWorld />
+    </XRiftProvider>
+  )
+}
+```
+
+#### useScreenShareContext フック
+
+コンポーネント内で画面共有の状態を取得するフックです。
+
+```tsx
+import { useScreenShareContext } from '@xrift/world-components'
+
+function MyComponent() {
+  const { videoElement, isSharing, startScreenShare, stopScreenShare } = useScreenShareContext()
+
+  return (
+    <button onClick={isSharing ? stopScreenShare : startScreenShare}>
+      {isSharing ? '共有を停止' : '共有を開始'}
+    </button>
+  )
+}
+```
+
+#### 注意事項
+
+- `XRiftProvider` に `screenShareImplementation` を渡すことが必須です
+- 映像がない場合は「クリックして画面共有」というガイドテキストが表示されます
+- スクリーンをクリックすると `startScreenShare` / `stopScreenShare` が呼び出されます
+
 ### Skybox コンポーネント
 
 画像を使わずにグラデーションで空を表現するシンプルなskyboxコンポーネントです。

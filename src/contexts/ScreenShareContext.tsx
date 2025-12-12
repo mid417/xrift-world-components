@@ -5,10 +5,10 @@ export interface ScreenShareContextValue {
   videoElement: HTMLVideoElement | null
   /** 自分が共有中か */
   isSharing: boolean
-  /** 共有開始（undefinedの場合は開始不可） */
-  startScreenShare?: () => void
-  /** 共有停止（undefinedの場合は停止不可） */
-  stopScreenShare?: () => void
+  /** 共有開始 */
+  startScreenShare: () => void
+  /** 共有停止 */
+  stopScreenShare: () => void
 }
 
 /**

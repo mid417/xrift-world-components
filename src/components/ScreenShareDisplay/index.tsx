@@ -34,9 +34,9 @@ export const ScreenShareDisplay = memo(({
 
   const handleInteract = useCallback(() => {
     if (isSharing) {
-      stopScreenShare?.()
+      stopScreenShare()
     } else {
-      startScreenShare?.()
+      startScreenShare()
     }
   }, [isSharing, startScreenShare, stopScreenShare])
 
@@ -46,7 +46,6 @@ export const ScreenShareDisplay = memo(({
         id={id}
         onInteract={handleInteract}
         interactionText={interactionText}
-        enabled={isSharing ? !!stopScreenShare : !!startScreenShare}
       >
         <mesh>
           <planeGeometry args={[scale[0], scale[1]]} />

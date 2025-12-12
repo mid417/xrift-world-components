@@ -88,16 +88,13 @@ export const ScreenShareDisplay = memo(({
   }, [videoElement])
 
   // インタラクションハンドラ
-  const handleInteract = useCallback(
-    (_id: string) => {
-      if (isSharing) {
-        stopScreenShare?.()
-      } else {
-        startScreenShare?.()
-      }
-    },
-    [isSharing, startScreenShare, stopScreenShare],
-  )
+  const handleInteract = useCallback(() => {
+    if (isSharing) {
+      stopScreenShare?.()
+    } else {
+      startScreenShare?.()
+    }
+  }, [isSharing, startScreenShare, stopScreenShare])
 
   const interactionText = isSharing ? DEFAULT_STOP_TEXT : DEFAULT_START_TEXT
   const hasVideo = texture !== null

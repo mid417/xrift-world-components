@@ -33,11 +33,6 @@ export const ScreenShareDisplay = memo((props: Props) => {
     position = DEFAULT_POSITION,
     rotation = DEFAULT_ROTATION,
     scale = DEFAULT_SCALE,
-    guideText = DEFAULT_GUIDE_TEXT,
-    startShareText = DEFAULT_START_TEXT,
-    stopShareText = DEFAULT_STOP_TEXT,
-    backgroundColor = DEFAULT_BG_COLOR,
-    guideTextColor = DEFAULT_TEXT_COLOR,
     interactable = true,
   } = props
 
@@ -118,7 +113,7 @@ export const ScreenShareDisplay = memo((props: Props) => {
     [isSharing, canStartShare, onStartShare, onStopShare],
   )
 
-  const interactionText = isSharing ? stopShareText : startShareText
+  const interactionText = isSharing ? DEFAULT_STOP_TEXT : DEFAULT_START_TEXT
   const hasVideo = texture !== null
 
   // スクリーンのメッシュ
@@ -130,7 +125,7 @@ export const ScreenShareDisplay = memo((props: Props) => {
         map={texture}
         side={THREE.FrontSide}
         toneMapped={false}
-        color={hasVideo ? 'white' : backgroundColor}
+        color={hasVideo ? 'white' : DEFAULT_BG_COLOR}
       />
     </mesh>
   )
@@ -151,15 +146,15 @@ export const ScreenShareDisplay = memo((props: Props) => {
       )}
 
       {/* ガイドテキスト */}
-      {!hasVideo && guideText && (
+      {!hasVideo && (
         <Text
           position={[0, 0, 0.01]}
           fontSize={scale[0] * 0.05}
-          color={guideTextColor}
+          color={DEFAULT_TEXT_COLOR}
           anchorX="center"
           anchorY="middle"
         >
-          {guideText}
+          {DEFAULT_GUIDE_TEXT}
         </Text>
       )}
     </group>

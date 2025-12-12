@@ -22,18 +22,6 @@ export interface Props {
   /** 共有停止コールバック */
   onStopShare?: () => void
 
-  // ---- 表示カスタマイズ ----
-  /** 未共有時のガイドテキスト */
-  guideText?: string
-  /** 開始時のインタラクションテキスト */
-  startShareText?: string
-  /** 停止時のインタラクションテキスト */
-  stopShareText?: string
-  /** 背景色（映像なし時） */
-  backgroundColor?: string
-  /** ガイドテキストの色 */
-  guideTextColor?: string
-
   // ---- インタラクション制御 ----
   /** インタラクション有効化（デフォルト: true） */
   interactable?: boolean

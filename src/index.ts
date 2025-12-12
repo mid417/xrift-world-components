@@ -12,6 +12,13 @@ export {
   type InstanceStateContextValue,
 } from './contexts/InstanceStateContext'
 
+export {
+  ScreenShareContext,
+  ScreenShareProvider,
+  useScreenShareContext,
+  type ScreenShareContextValue,
+} from './contexts/ScreenShareContext'
+
 // Components
 export {
   Interactable,

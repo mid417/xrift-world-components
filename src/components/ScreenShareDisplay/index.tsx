@@ -56,10 +56,9 @@ export const ScreenShareDisplay = memo(({
 
   // マテリアルにテクスチャをセット
   useEffect(() => {
-    if (materialRef.current && texture) {
-      materialRef.current.map = texture
-      materialRef.current.needsUpdate = true
-    }
+    if (!materialRef.current || !texture) return
+    materialRef.current.map = texture
+    materialRef.current.needsUpdate = true
   }, [texture])
 
   // テクスチャ更新（毎フレーム）

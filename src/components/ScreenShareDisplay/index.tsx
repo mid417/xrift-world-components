@@ -64,9 +64,8 @@ export const ScreenShareDisplay = memo(({
 
   // テクスチャ更新（毎フレーム）
   useFrame(() => {
-    if (texture) {
-      texture.needsUpdate = true
-    }
+    if (!texture) return
+    texture.needsUpdate = true
   })
 
   // video要素が一時停止していたら再生を試みる

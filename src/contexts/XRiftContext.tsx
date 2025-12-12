@@ -1,7 +1,15 @@
-import { createContext, type ReactNode, useCallback, useContext, useState } from 'react'
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import type { Object3D } from 'three'
 import { InstanceStateProvider, type InstanceStateContextValue } from './InstanceStateContext'
 import { ScreenShareProvider, type ScreenShareContextValue } from './ScreenShareContext'
+
+// デフォルトの画面共有実装（開発環境用）
+const createDefaultScreenShareImplementation = (): ScreenShareContextValue => ({
+  videoElement: null,
+  isSharing: false,
+  startScreenShare: () => console.log('[ScreenShare] startScreenShare called'),
+  stopScreenShare: () => console.log('[ScreenShare] stopScreenShare called'),
+})
 
 export interface XRiftContextValue {
   /**
@@ -48,9 +56,10 @@ interface Props {
    */
   instanceStateImplementation?: InstanceStateContextValue
   /**
-   * 画面共有の実装
+   * 画面共有の実装（オプション）
+   * 指定しない場合はデフォルト実装（no-op）が使用される
    */
-  screenShareImplementation: ScreenShareContextValue
+  screenShareImplementation?: ScreenShareContextValue
   children: ReactNode
 }
 
@@ -68,6 +77,12 @@ export const XRiftProvider = ({
 }: Props) => {
   // インタラクト可能なオブジェクトの管理
   const [interactableObjects] = useState(() => new Set<Object3D>())
+
+  // 画面共有の実装（指定がない場合はデフォルト実装を使用）
+  const screenShareImpl = useMemo(
+    () => screenShareImplementation ?? createDefaultScreenShareImplementation(),
+    [screenShareImplementation],
+  )
 
   // オブジェクトの登録
   const registerInteractable = useCallback((object: Object3D) => {
@@ -89,7 +104,7 @@ export const XRiftProvider = ({
         unregisterInteractable,
       }}
     >
-      <ScreenShareProvider value={screenShareImplementation}>
+      <ScreenShareProvider value={screenShareImpl}>
         <InstanceStateProvider implementation={instanceStateImplementation}>
           {children}
         </InstanceStateProvider>

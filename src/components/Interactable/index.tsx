@@ -1,10 +1,8 @@
 import { useEffect, useRef, type FC } from 'react'
 import type { Group } from 'three'
+import { LAYERS } from '../../constants/layers'
 import { useXRift } from '../../contexts/XRiftContext'
 import type { Props } from './types'
-
-// Note: Layer 10 は VRMFirstPerson の THIRD_PERSON_ONLY で使用されているため、Layer 11 を使用
-const INTERACTABLE_LAYER = 11
 
 export const Interactable: FC<Props> = ({
   id,
@@ -24,7 +22,7 @@ export const Interactable: FC<Props> = ({
 
     // レイヤーを設定（レイキャスト最適化のため）
     object.traverse((child) => {
-      child.layers.enable(INTERACTABLE_LAYER)
+      child.layers.enable(LAYERS.INTERACTABLE)
     })
 
     // インタラクト可能オブジェクトとして登録
@@ -35,7 +33,7 @@ export const Interactable: FC<Props> = ({
       unregisterInteractable(object)
 
       object.traverse((child) => {
-        child.layers.disable(INTERACTABLE_LAYER)
+        child.layers.disable(LAYERS.INTERACTABLE)
       })
     }
   }, [registerInteractable, unregisterInteractable])

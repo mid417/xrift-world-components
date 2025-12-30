@@ -68,12 +68,12 @@ export const SpawnPoint: FC<SpawnPointProps> = ({
   const groupRef = useRef<Group>(null)
   const yawRad = (yaw * Math.PI) / 180
 
-  // 前回の値を保持（変化があった時だけsetSpawnPointを呼ぶため）
-  const lastPosRef = useRef<string>('')
-  const lastYawRef = useRef<number>(0)
+  // 初回のみワールド座標を取得するためのフラグ
+  const initializedRef = useRef(false)
 
   useFrame(() => {
-    if (!groupRef.current) return
+    if (initializedRef.current || !groupRef.current) return
+    initializedRef.current = true
 
     // ワールド座標を取得
     groupRef.current.getWorldPosition(_worldPos)
@@ -92,13 +92,7 @@ export const SpawnPoint: FC<SpawnPointProps> = ({
       _worldPos.z,
     ]
 
-    // 変化があった時だけ更新（パフォーマンス最適化）
-    const posKey = worldPosition.join(',')
-    if (posKey !== lastPosRef.current || normalizedYaw !== lastYawRef.current) {
-      lastPosRef.current = posKey
-      lastYawRef.current = normalizedYaw
-      setSpawnPoint({ position: worldPosition, yaw: normalizedYaw })
-    }
+    setSpawnPoint({ position: worldPosition, yaw: normalizedYaw })
   })
 
   // Vite以外の環境では import.meta.env が存在しない可能性があるため安全にアクセス

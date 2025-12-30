@@ -86,16 +86,19 @@ export const SpawnPoint: FC<SpawnPointProps> = ({
 
       {/* 矢印（向きを示す） - yawに合わせて回転 */}
       <group rotation={[0, -yawRad, 0]}>
-        {/* 矢印の軸 */}
-        <mesh position={[0, 0.3, -0.1]} rotation={[Math.PI / 2, 0, 0]}>
-          <cylinderGeometry args={[0.03, 0.03, 0.3, 8]} />
-          <meshBasicMaterial color="#00ff88" />
-        </mesh>
-        {/* 矢印の先端 */}
-        <mesh position={[0, 0.3, 0.12]} rotation={[Math.PI / 2, 0, 0]}>
-          <coneGeometry args={[0.08, 0.15, 8]} />
-          <meshBasicMaterial color="#00ff88" />
-        </mesh>
+        {/* 矢印全体を180度回転して正しい向きに */}
+        <group rotation={[0, Math.PI, 0]}>
+          {/* 矢印の軸 */}
+          <mesh position={[0, 0.3, -0.1]} rotation={[Math.PI / 2, 0, 0]}>
+            <cylinderGeometry args={[0.03, 0.03, 0.3, 8]} />
+            <meshBasicMaterial color="#00ff88" />
+          </mesh>
+          {/* 矢印の先端 */}
+          <mesh position={[0, 0.3, 0.12]} rotation={[Math.PI / 2, 0, 0]}>
+            <coneGeometry args={[0.08, 0.15, 8]} />
+            <meshBasicMaterial color="#00ff88" />
+          </mesh>
+        </group>
       </group>
     </group>
   )

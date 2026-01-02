@@ -3,6 +3,7 @@ import type { Object3D } from 'three'
 import { InstanceStateProvider, type InstanceStateContextValue } from './InstanceStateContext'
 import { ScreenShareProvider, type ScreenShareContextValue } from './ScreenShareContext'
 import { SpawnPointProvider, type SpawnPointContextValue } from './SpawnPointContext'
+import { UsersProvider, type UsersContextValue } from './UsersContext'
 
 // デフォルトの画面共有実装（開発環境用）
 const createDefaultScreenShareImplementation = (): ScreenShareContextValue => ({
@@ -60,6 +61,11 @@ interface Props {
    * 指定しない場合はデフォルト実装（ローカルstate）が使用される
    */
   spawnPointImplementation?: SpawnPointContextValue
+  /**
+   * ユーザー情報の実装（オプション）
+   * 指定しない場合はデフォルト実装（空の状態）が使用される
+   */
+  usersImplementation?: UsersContextValue
   children: ReactNode
 }
 
@@ -73,6 +79,7 @@ export const XRiftProvider = ({
   instanceStateImplementation,
   screenShareImplementation,
   spawnPointImplementation,
+  usersImplementation,
   children,
 }: Props) => {
   // インタラクト可能なオブジェクトの管理
@@ -106,7 +113,9 @@ export const XRiftProvider = ({
       <ScreenShareProvider value={screenShareImpl}>
         <InstanceStateProvider implementation={instanceStateImplementation}>
           <SpawnPointProvider implementation={spawnPointImplementation}>
-            {children}
+            <UsersProvider implementation={usersImplementation}>
+              {children}
+            </UsersProvider>
           </SpawnPointProvider>
         </InstanceStateProvider>
       </ScreenShareProvider>

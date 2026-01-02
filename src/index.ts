@@ -27,6 +27,14 @@ export {
   type SpawnPointContextValue,
 } from './contexts/SpawnPointContext'
 
+export {
+  UsersContext,
+  UsersProvider,
+  useUsers,
+  type User,
+  type UsersContextValue,
+} from './contexts/UsersContext'
+
 // Components
 export {
   Interactable,

@@ -98,6 +98,17 @@ function VideoScreenInner({
     }
   }, [currentTime, texture])
 
+  // アンマウント時に動画を停止
+  useEffect(() => {
+    const video = texture.image as HTMLVideoElement
+
+    return () => {
+      video.pause()
+      video.src = ''
+      video.load()
+    }
+  }, [texture])
+
   return (
     <group position={position} rotation={rotation}>
       <mesh>

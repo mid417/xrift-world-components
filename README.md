@@ -27,6 +27,12 @@ npm install @xrift/world-components
 
 **[docs.xrift.net](https://docs.xrift.net)**
 
+## 関連リンク
+
+- [Xrift 公式サイト](https://xrift.net/)
+- [xrift-world-template](https://github.com/WebXR-JP/xrift-world-template) - ワールド開発用テンプレート
+- [xrift-cli](https://github.com/WebXR-JP/xrift-cli) - Xrift CLI ツール
+
 ## 開発
 
 ```bash

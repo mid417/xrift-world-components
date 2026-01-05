@@ -75,7 +75,7 @@ export const ScreenShareDisplay = memo(({
           anchorX="center"
           anchorY="middle"
         >
-          {isRoomConnected ? 'クリックして画面共有' : '他のユーザーがいると画面共有できます'}
+          {isRoomConnected ? 'クリックして画面共有' : '他のユーザーがいると\n画面共有できます'}
         </Text>
       )}
     </group>

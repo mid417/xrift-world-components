@@ -43,18 +43,20 @@ export const ScreenShareDisplay = memo(({
         onInteract={handleInteract}
         interactionText={interactionText}
       >
-        {/* 背景（黒帯部分） */}
-        <mesh>
-          <planeGeometry args={[screenSize[0], screenSize[1]]} />
-          <meshBasicMaterial
-            side={THREE.FrontSide}
-            toneMapped={false}
-            color="#1a1a2a"
-          />
-        </mesh>
+        {/* 背景（映像がない時のみ表示） */}
+        {!hasVideo && (
+          <mesh>
+            <planeGeometry args={[screenSize[0], screenSize[1]]} />
+            <meshBasicMaterial
+              side={THREE.FrontSide}
+              toneMapped={false}
+              color="#1a1a2a"
+            />
+          </mesh>
+        )}
         {/* 映像 */}
         {hasVideo && (
-          <mesh position={[0, 0, 0.001]}>
+          <mesh>
             <planeGeometry args={[videoSize[0], videoSize[1]]} />
             <meshBasicMaterial
               ref={materialRef}

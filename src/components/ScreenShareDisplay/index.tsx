@@ -23,7 +23,7 @@ export const ScreenShareDisplay = memo(({
   rotation = DEFAULT_ROTATION,
   width = DEFAULT_WIDTH,
 }: Props) => {
-  const { videoElement, isSharing, startScreenShare, stopScreenShare } = useScreenShareContext()
+  const { videoElement, isSharing, startScreenShare, stopScreenShare, isRoomConnected } = useScreenShareContext()
   const interactionText = isSharing ? '画面共有を停止' : '画面共有を開始'
   const screenSize = useMemo<[number, number]>(() => [width, width * (9 / 16)], [width])
   const { texture, hasVideo, materialRef, videoSize } = useVideoTexture(videoElement, screenSize)
@@ -75,7 +75,7 @@ export const ScreenShareDisplay = memo(({
           anchorX="center"
           anchorY="middle"
         >
-          クリックして画面共有
+          {isRoomConnected ? 'クリックして画面共有' : '現在画面共有はできません'}
         </Text>
       )}
     </group>

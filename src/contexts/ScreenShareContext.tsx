@@ -9,6 +9,8 @@ export interface ScreenShareContextValue {
   startScreenShare: () => void
   /** 共有停止 */
   stopScreenShare: () => void
+  /** roomに接続中か */
+  isRoomConnected: boolean
 }
 
 /**

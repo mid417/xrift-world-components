@@ -11,6 +11,7 @@ const createDefaultScreenShareImplementation = (): ScreenShareContextValue => ({
   isSharing: false,
   startScreenShare: () => console.log('[ScreenShare] startScreenShare called'),
   stopScreenShare: () => console.log('[ScreenShare] stopScreenShare called'),
+  isRoomConnected: false,
 })
 
 export interface XRiftContextValue {

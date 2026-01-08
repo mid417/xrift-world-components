@@ -44,11 +44,12 @@ export function Mirror({
     return () => {
       if (currentGroup && reflector) {
         currentGroup.remove(reflector)
+        geometry.dispose()
         reflector.dispose?.()
       }
       reflectorRef.current = null
     }
-  }, [size, color, textureResolution, gl])
+  }, [size[0], size[1], color, textureResolution, gl])
 
   // Reflectorの内部カメラ（virtualCamera）の全レイヤーを有効化
   // VRMFirstPersonのレイヤー設定により、メインカメラではThirdPersonOnlyレイヤー（頭部）が

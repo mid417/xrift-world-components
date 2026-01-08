@@ -17,6 +17,8 @@ export interface VideoScreenProps {
   sync?: 'global' | 'local'
   /** ミュート状態（デフォルト: false）。ブラウザの自動再生ポリシーによりユーザー操作前は音声付き自動再生がブロックされる場合がある */
   muted?: boolean
+  /** 音量（0〜1、デフォルト: 1） */
+  volume?: number
 }
 
 /**

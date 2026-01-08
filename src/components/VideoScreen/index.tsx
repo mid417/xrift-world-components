@@ -19,6 +19,7 @@ function VideoScreenInner({
   currentTime = 0,
   sync = 'global',
   muted = false,
+  volume = 1,
 }: VideoScreenProps) {
   // グローバル同期用の状態
   const [globalState, setGlobalState] = useInstanceState<VideoState>(
@@ -82,6 +83,14 @@ function VideoScreenInner({
       video.pause()
     }
   }, [playing, texture])
+
+  // 音量の同期
+  useEffect(() => {
+    const video = texture.image as HTMLVideoElement
+    if (!video) return
+
+    video.volume = Math.max(0, Math.min(1, volume))
+  }, [volume, texture])
 
   // 再生位置の同期ロジック（VRChat方式）
   // currentTimeが外部から変更された場合のみ同期

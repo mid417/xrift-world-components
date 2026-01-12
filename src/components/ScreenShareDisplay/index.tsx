@@ -44,28 +44,24 @@ export const ScreenShareDisplay = memo(({
         interactionText={interactionText}
       >
         {/* 背景（映像がない時のみ表示） */}
-        {!hasVideo && (
-          <mesh>
-            <planeGeometry args={[screenSize[0], screenSize[1]]} />
-            <meshBasicMaterial
-              side={THREE.FrontSide}
-              toneMapped={false}
-              color="#1a1a2a"
-            />
-          </mesh>
-        )}
+        <mesh visible={!hasVideo}>
+          <planeGeometry args={[screenSize[0], screenSize[1]]} />
+          <meshBasicMaterial
+            side={THREE.FrontSide}
+            toneMapped={false}
+            color="#1a1a2a"
+          />
+        </mesh>
         {/* 映像 */}
-        {hasVideo && (
-          <mesh>
-            <planeGeometry args={[videoSize[0], videoSize[1]]} />
-            <meshBasicMaterial
-              ref={materialRef}
-              map={texture}
-              side={THREE.FrontSide}
-              toneMapped={false}
-            />
-          </mesh>
-        )}
+        <mesh visible={hasVideo}>
+          <planeGeometry args={[videoSize[0], videoSize[1]]} />
+          <meshBasicMaterial
+            ref={materialRef}
+            map={texture}
+            side={THREE.FrontSide}
+            toneMapped={false}
+          />
+        </mesh>
       </Interactable>
 
       {/* ガイドテキスト */}

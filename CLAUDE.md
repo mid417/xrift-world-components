@@ -22,3 +22,13 @@
 3. **他リポジトリのコード確認**
    - `gh api repos/owner/repo/git/trees/branch?recursive=1` でファイル一覧を取得
    - `gh api repos/owner/repo/contents/path/to/file` でファイル内容を取得（base64デコードが必要）
+
+## 関連リポジトリ
+
+| リポジトリ | 説明 |
+|-----------|------|
+| [xrift-docs](https://github.com/WebXR-JP/xrift-docs) | ドキュメント |
+| [xrift-frontend](https://github.com/WebXR-JP/xrift-frontend) | フロントエンド |
+| [xrift-backend](https://github.com/WebXR-JP/xrift-backend) | バックエンド |
+| [xrift-world-template](https://github.com/WebXR-JP/xrift-world-template) | ワールドテンプレート |
+| [xrift-cli](https://github.com/WebXR-JP/xrift-cli) | CLI |

@@ -13,9 +13,7 @@ export interface RichVideoPlayerProps extends Omit<VideoScreenProps, 'scale' | '
   url?: string
   /** 初期再生状態（デフォルト: true） */
   playing?: boolean
-  /** ミュート状態（デフォルト: true）。ブラウザの自動再生ポリシーによりmuted: falseでは自動再生がブロックされる場合がある */
-  muted?: boolean
-  /** 初期音量 0〜1（デフォルト: 1） */
+  /** 初期音量 0〜1（デフォルト: 1）。ブラウザの自動再生ポリシーにより、音量0以外では自動再生がブロックされる場合がある */
   volume?: number
   /** 同期モード（デフォルト: 'global'） */
   sync?: 'global' | 'local'

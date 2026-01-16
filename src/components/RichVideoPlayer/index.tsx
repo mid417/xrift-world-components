@@ -18,8 +18,7 @@ const VideoPlayerInner = memo(
     width = DEFAULT_WIDTH,
     url = '',
     playing: initialPlaying = true,
-    muted = true,
-    volume: initialVolume = 1,
+    volume: initialVolume = 0,
   }: RichVideoPlayerProps & { url: string }) => {
     const [playing, setPlaying] = useState(initialPlaying)
     const [volume, setVolume] = useState(initialVolume)
@@ -29,7 +28,7 @@ const VideoPlayerInner = memo(
     const screenHeight = width * (9 / 16)
 
     const texture = useVideoTexture(url, {
-      muted,
+      muted: volume === 0,
       loop: true,
       start: playing,
     })

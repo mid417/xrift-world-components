@@ -51,7 +51,6 @@ export function TestScene() {
         width={3}
         volume={0}
         playing
-        muted
         url="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
       />
 

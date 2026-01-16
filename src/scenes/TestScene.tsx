@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { VideoScreen } from '../components/VideoScreen'
+import { RichVideoPlayer } from '../components/RichVideoPlayer'
 import { Mirror } from '../components/Mirror'
 import { Skybox } from '../components/Skybox'
 import { Interactable } from '../components/Interactable'
@@ -25,21 +26,32 @@ export function TestScene() {
       </mesh>
 
       {/* メインスクリーン（中央）- グローバル同期 */}
-      <VideoScreen
+      {/* <VideoScreen
         id="main-screen"
         position={[0, 2, -5]}
         scale={[16 / 9 * 3, 3]}
         url="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
         sync="global"
-      />
+      /> */}
 
       {/* サブスクリーン（右）- ローカルのみ */}
-      <VideoScreen
+      {/* <VideoScreen
         id="sub-screen"
         position={[5, 1.5, -3]}
         scale={[16 / 9 * 1.5, 1.5]}
         url="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
         sync="local"
+      /> */}
+
+      {/* リッチビデオプレイヤー（左前） */}
+      <RichVideoPlayer
+        id="rich-player"
+        position={[-4, 2, -2]}
+        rotation={[0, Math.PI / 6, 0]}
+        width={3}
+        volume={0}
+        playing
+        url="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
       />
 
       {/* 鏡（左） */}

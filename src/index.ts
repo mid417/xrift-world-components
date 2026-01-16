@@ -52,6 +52,11 @@ export {
 } from './components/VideoScreen'
 
 export {
+  RichVideoPlayer,
+  type RichVideoPlayerProps,
+} from './components/RichVideoPlayer'
+
+export {
   ScreenShareDisplay,
   type ScreenShareDisplayProps,
 } from './components/ScreenShareDisplay'

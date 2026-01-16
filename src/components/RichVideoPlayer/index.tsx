@@ -28,7 +28,7 @@ const VideoPlayerInner = memo(
     const screenHeight = width * (9 / 16)
 
     const texture = useVideoTexture(url, {
-      muted: volume === 0,
+      muted: false,
       loop: true,
       start: playing,
     })

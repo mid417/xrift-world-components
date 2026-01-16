@@ -29,7 +29,7 @@ export const VolumeControl = memo(
       <group position={position}>
         {/* スピーカーアイコン */}
         <Text
-          position={[-barWidth / 2 - size * 0.3, 0, 0.01]}
+          position={[-barWidth / 2 - size * 0.4, 0, 0.01]}
           fontSize={size * 0.4}
           color="#ffffff"
           anchorX="center"

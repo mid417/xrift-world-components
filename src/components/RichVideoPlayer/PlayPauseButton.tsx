@@ -24,7 +24,7 @@ export const PlayPauseButton = memo(
           anchorX="center"
           anchorY="middle"
         >
-          {playing ? '||' : '>'}
+          {playing ? '||' : '▶'}
         </Text>
       </group>
     )

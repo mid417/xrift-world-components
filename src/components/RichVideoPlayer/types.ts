@@ -1,6 +1,6 @@
 import type { VideoScreenProps } from '../VideoScreen/types'
 
-export interface RichVideoPlayerProps extends Omit<VideoScreenProps, 'scale' | 'currentTime'> {
+export interface RichVideoPlayerProps extends Omit<VideoScreenProps, 'scale' | 'currentTime' | 'muted'> {
   /** スクリーンの一意なID（必須） */
   id: string
   /** スクリーンの位置 */
@@ -13,7 +13,7 @@ export interface RichVideoPlayerProps extends Omit<VideoScreenProps, 'scale' | '
   url?: string
   /** 初期再生状態（デフォルト: true） */
   playing?: boolean
-  /** 初期音量 0〜1（デフォルト: 1）。ブラウザの自動再生ポリシーにより、音量0以外では自動再生がブロックされる場合がある */
+  /** 初期音量 0〜1（デフォルト: 1） */
   volume?: number
   /** 同期モード（デフォルト: 'global'） */
   sync?: 'global' | 'local'

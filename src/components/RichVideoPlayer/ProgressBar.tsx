@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react'
 import { Interactable } from '../Interactable'
-import { formatTime } from './hooks'
+import { formatTime, calculateSegments, calculateProgressBar } from './utils'
 import type { ProgressBarProps } from './types'
 
 const SEGMENTS = 20
@@ -15,24 +15,17 @@ export const ProgressBar = memo(
     duration,
     onSeek,
   }: ProgressBarProps) => {
+    const { width: progressWidth, offset: progressOffset } = calculateProgressBar(progress, width)
     const segmentWidth = width / SEGMENTS
-    const progressWidth = width * Math.min(1, Math.max(0, progress))
-    const progressOffset = -width / 2 + progressWidth / 2
 
     const segments = useMemo(() => {
-      return Array.from({ length: SEGMENTS }).map((_, i) => {
-        const segmentProgress = i / (SEGMENTS - 1)
-        const targetTime = duration * segmentProgress
-        const xPos = -width / 2 + segmentWidth * (i + 0.5)
-
-        return {
-          index: i,
-          xPos,
-          targetTime,
-          interactionText: targetTime === 0 ? '最初に戻る' : formatTime(targetTime),
-        }
+      return calculateSegments({
+        segments: SEGMENTS,
+        width,
+        maxValue: duration,
+        formatLabel: (value) => (value === 0 ? '最初に戻る' : formatTime(value)),
       })
-    }, [duration, width, segmentWidth])
+    }, [duration, width])
 
     return (
       <group position={position}>
@@ -55,8 +48,8 @@ export const ProgressBar = memo(
           <Interactable
             key={segment.index}
             id={`${id}-seg-${segment.index}`}
-            onInteract={() => onSeek(segment.targetTime)}
-            interactionText={segment.interactionText}
+            onInteract={() => onSeek(segment.value)}
+            interactionText={segment.label}
           >
             <mesh position={[segment.xPos, 0, 0.002]}>
               <planeGeometry args={[segmentWidth * 0.98, height * 2]} />

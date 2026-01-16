@@ -3,7 +3,7 @@ import { Text } from '@react-three/drei'
 import { PlayPauseButton } from './PlayPauseButton'
 import { ProgressBar } from './ProgressBar'
 import { VolumeControl } from './VolumeControl'
-import { formatTime } from './hooks'
+import { formatTime } from './utils'
 import type { ControlPanelProps } from './types'
 
 const PANEL_HEIGHT = 0.15

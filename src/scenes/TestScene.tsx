@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { VideoScreen } from '../components/VideoScreen'
 import { RichVideoPlayer } from '../components/RichVideoPlayer'
+import { LiveVideoPlayer } from '../components/LiveVideoPlayer'
 import { Mirror } from '../components/Mirror'
 import { Skybox } from '../components/Skybox'
 import { Interactable } from '../components/Interactable'
@@ -52,6 +53,17 @@ export function TestScene() {
         volume={0}
         playing
         url="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+      />
+
+      {/* ライブビデオプレイヤー（右前） */}
+      <LiveVideoPlayer
+        id="live-player"
+        position={[4, 2, -2]}
+        rotation={[0, -Math.PI / 6, 0]}
+        width={3}
+        volume={0}
+        playing
+        url="https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"
       />
 
       {/* 鏡（左） */}

@@ -3,6 +3,11 @@ import type { Object3D } from 'three'
 import { InstanceStateProvider, type InstanceStateContextValue } from './InstanceStateContext'
 import { ScreenShareProvider, type ScreenShareContextValue } from './ScreenShareContext'
 import { SpawnPointProvider, type SpawnPointContextValue } from './SpawnPointContext'
+import {
+  TextInputProvider,
+  createDefaultTextInputImplementation,
+  type TextInputContextValue,
+} from './TextInputContext'
 import { UsersProvider, type UsersContextValue } from './UsersContext'
 
 // デフォルトの画面共有実装（開発環境用）
@@ -63,6 +68,11 @@ interface Props {
    */
   spawnPointImplementation?: SpawnPointContextValue
   /**
+   * テキスト入力の実装（オプション）
+   * 指定しない場合はデフォルト実装（ブラウザのprompt）が使用される
+   */
+  textInputImplementation?: TextInputContextValue
+  /**
    * ユーザー情報の実装（オプション）
    * 指定しない場合はデフォルト実装（空の状態）が使用される
    */
@@ -80,6 +90,7 @@ export const XRiftProvider = ({
   instanceStateImplementation,
   screenShareImplementation,
   spawnPointImplementation,
+  textInputImplementation,
   usersImplementation,
   children,
 }: Props) => {
@@ -90,6 +101,12 @@ export const XRiftProvider = ({
   const screenShareImpl = useMemo(
     () => screenShareImplementation ?? createDefaultScreenShareImplementation(),
     [screenShareImplementation],
+  )
+
+  // テキスト入力の実装（指定がない場合はデフォルト実装を使用）
+  const textInputImpl = useMemo(
+    () => textInputImplementation ?? createDefaultTextInputImplementation(),
+    [textInputImplementation],
   )
 
   // オブジェクトの登録
@@ -112,13 +129,15 @@ export const XRiftProvider = ({
       }}
     >
       <ScreenShareProvider value={screenShareImpl}>
-        <InstanceStateProvider implementation={instanceStateImplementation}>
-          <SpawnPointProvider implementation={spawnPointImplementation}>
-            <UsersProvider implementation={usersImplementation}>
-              {children}
-            </UsersProvider>
-          </SpawnPointProvider>
-        </InstanceStateProvider>
+        <TextInputProvider value={textInputImpl}>
+          <InstanceStateProvider implementation={instanceStateImplementation}>
+            <SpawnPointProvider implementation={spawnPointImplementation}>
+              <UsersProvider implementation={usersImplementation}>
+                {children}
+              </UsersProvider>
+            </SpawnPointProvider>
+          </InstanceStateProvider>
+        </TextInputProvider>
       </ScreenShareProvider>
     </XRiftContext.Provider>
   )

@@ -5,12 +5,15 @@ import { LiveVideoPlayer } from '../components/LiveVideoPlayer'
 import { Mirror } from '../components/Mirror'
 import { Skybox } from '../components/Skybox'
 import { Interactable } from '../components/Interactable'
+import { TextInput } from '../components/TextInput'
 
 /**
  * VideoScreenとMirrorのテストシーン
  * Triplexでコンポーネントを確認するためのシーン
  */
 export function TestScene() {
+  const [textInputValue, setTextInputValue] = useState('')
+
   return (
     <>
       {/* 空 */}
@@ -97,6 +100,23 @@ export function TestScene() {
         <cylinderGeometry args={[0.5, 0.5, 1.5, 32]} />
         <meshStandardMaterial color="green" />
       </mesh>
+
+      {/* テキスト入力 */}
+      <TextInput
+        id="test-input"
+        placeholder="名前を入力..."
+        maxLength={20}
+        value={textInputValue}
+        onSubmit={(value) => {
+          console.log('TextInput submitted:', value)
+          setTextInputValue(value)
+        }}
+      >
+        <mesh position={[0, 1.5, -2]}>
+          <boxGeometry args={[2, 0.5, 0.1]} />
+          <meshStandardMaterial color="#333" />
+        </mesh>
+      </TextInput>
     </>
   )
 }

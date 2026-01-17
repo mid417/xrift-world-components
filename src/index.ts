@@ -35,6 +35,15 @@ export {
   type UsersContextValue,
 } from './contexts/UsersContext'
 
+export {
+  TextInputContext,
+  TextInputProvider,
+  useTextInputContext,
+  createDefaultTextInputImplementation,
+  type TextInputContextValue,
+  type TextInputRequest,
+} from './contexts/TextInputContext'
+
 // Components
 export {
   Interactable,
@@ -70,6 +79,11 @@ export {
   SpawnPoint,
   type SpawnPointProps,
 } from './components/SpawnPoint'
+
+export {
+  TextInput,
+  type TextInputProps,
+} from './components/TextInput'
 
 // Hooks
 export { useInstanceState } from './hooks/useInstanceState'

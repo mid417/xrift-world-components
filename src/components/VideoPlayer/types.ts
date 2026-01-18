@@ -1,6 +1,6 @@
 import type { VideoScreenProps } from '../VideoScreen/types'
 
-export interface RichVideoPlayerProps extends Omit<VideoScreenProps, 'scale' | 'currentTime' | 'muted'> {
+export interface VideoPlayerProps extends Omit<VideoScreenProps, 'scale' | 'currentTime' | 'muted'> {
   /** スクリーンの一意なID（必須） */
   id: string
   /** スクリーンの位置 */

@@ -61,9 +61,9 @@ export {
 } from './components/VideoScreen'
 
 export {
-  RichVideoPlayer,
-  type RichVideoPlayerProps,
-} from './components/RichVideoPlayer'
+  VideoPlayer,
+  type VideoPlayerProps,
+} from './components/VideoPlayer'
 
 export {
   LiveVideoPlayer,

@@ -5,7 +5,7 @@ import {
   calculateSegments,
   calculateProgressBar,
   getVolumeIcon,
-} from '../RichVideoPlayer/utils'
+} from '../VideoPlayer/utils'
 import type { VolumeControlProps } from './types'
 
 const SEGMENTS = 11

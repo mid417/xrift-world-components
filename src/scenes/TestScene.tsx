@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { VideoScreen } from '../components/VideoScreen'
-import { RichVideoPlayer } from '../components/RichVideoPlayer'
+import { VideoPlayer } from '../components/VideoPlayer'
 import { LiveVideoPlayer } from '../components/LiveVideoPlayer'
 import { Mirror } from '../components/Mirror'
 import { Skybox } from '../components/Skybox'
@@ -47,9 +47,9 @@ export function TestScene() {
         sync="local"
       /> */}
 
-      {/* リッチビデオプレイヤー（左前） */}
-      <RichVideoPlayer
-        id="rich-player"
+      {/* ビデオプレイヤー（左前） */}
+      <VideoPlayer
+        id="video-player"
         position={[-4, 2, -2]}
         rotation={[0, Math.PI / 6, 0]}
         width={3}

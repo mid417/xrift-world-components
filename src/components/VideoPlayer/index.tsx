@@ -2,9 +2,9 @@ import { memo, Suspense, useState, useCallback, useEffect, useRef } from 'react'
 import { useVideoTexture } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { ControlPanel } from './ControlPanel'
-import type { RichVideoPlayerProps } from './types'
+import type { VideoPlayerProps } from './types'
 
-export type { RichVideoPlayerProps } from './types'
+export type { VideoPlayerProps } from './types'
 
 const DEFAULT_POSITION: [number, number, number] = [0, 2, -5]
 const DEFAULT_ROTATION: [number, number, number] = [0, 0, 0]
@@ -20,7 +20,7 @@ const VideoPlayerInner = memo(
     playing: initialPlaying = true,
     volume: initialVolume = 1,
     onUrlChange,
-  }: RichVideoPlayerProps & { url: string; onUrlChange: (url: string) => void }) => {
+  }: VideoPlayerProps & { url: string; onUrlChange: (url: string) => void }) => {
     const [playing, setPlaying] = useState(initialPlaying)
     const [volume, setVolume] = useState(initialVolume)
     const [progress, setProgress] = useState(0)
@@ -139,7 +139,7 @@ const VideoPlayerInner = memo(
 
 VideoPlayerInner.displayName = 'VideoPlayerInner'
 
-export const RichVideoPlayer = memo(
+export const VideoPlayer = memo(
   ({
     id,
     position = DEFAULT_POSITION,
@@ -147,7 +147,7 @@ export const RichVideoPlayer = memo(
     width = DEFAULT_WIDTH,
     url: initialUrl,
     ...props
-  }: RichVideoPlayerProps) => {
+  }: VideoPlayerProps) => {
     const [currentUrl, setCurrentUrl] = useState(initialUrl)
     const screenHeight = width * (9 / 16)
 
@@ -192,4 +192,4 @@ export const RichVideoPlayer = memo(
   }
 )
 
-RichVideoPlayer.displayName = 'RichVideoPlayer'
+VideoPlayer.displayName = 'VideoPlayer'

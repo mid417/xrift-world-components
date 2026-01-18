@@ -19,7 +19,8 @@ const VideoPlayerInner = memo(
     url = '',
     playing: initialPlaying = true,
     volume: initialVolume = 1,
-  }: RichVideoPlayerProps & { url: string }) => {
+    onUrlChange,
+  }: RichVideoPlayerProps & { url: string; onUrlChange: (url: string) => void }) => {
     const [playing, setPlaying] = useState(initialPlaying)
     const [volume, setVolume] = useState(initialVolume)
     const [progress, setProgress] = useState(0)
@@ -125,9 +126,11 @@ const VideoPlayerInner = memo(
           progress={progress}
           duration={duration}
           volume={volume}
+          currentUrl={url}
           onPlayPause={handlePlayPause}
           onSeek={handleSeek}
           onVolumeChange={handleVolumeChange}
+          onUrlChange={onUrlChange}
         />
       </group>
     )
@@ -142,12 +145,17 @@ export const RichVideoPlayer = memo(
     position = DEFAULT_POSITION,
     rotation = DEFAULT_ROTATION,
     width = DEFAULT_WIDTH,
-    url,
+    url: initialUrl,
     ...props
   }: RichVideoPlayerProps) => {
+    const [currentUrl, setCurrentUrl] = useState(initialUrl)
     const screenHeight = width * (9 / 16)
 
-    if (!url) {
+    const handleUrlChange = useCallback((newUrl: string) => {
+      setCurrentUrl(newUrl)
+    }, [])
+
+    if (!currentUrl) {
       return (
         <group position={position} rotation={rotation}>
           <mesh>
@@ -170,11 +178,13 @@ export const RichVideoPlayer = memo(
         }
       >
         <VideoPlayerInner
+          key={currentUrl}
           id={id}
           position={position}
           rotation={rotation}
           width={width}
-          url={url}
+          url={currentUrl}
+          onUrlChange={handleUrlChange}
           {...props}
         />
       </Suspense>

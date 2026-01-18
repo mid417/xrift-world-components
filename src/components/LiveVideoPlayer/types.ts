@@ -26,8 +26,10 @@ export interface LiveControlPanelProps {
   playing: boolean
   volume: number
   isBuffering: boolean
+  currentUrl: string
   onPlayPause: () => void
   onVolumeChange: (volume: number) => void
+  onUrlChange: (url: string) => void
 }
 
 export interface PlayPauseButtonProps {
@@ -54,4 +56,12 @@ export interface LiveIndicatorProps {
 export interface LoadingSpinnerProps {
   position: [number, number, number]
   size: number
+}
+
+export interface UrlInputButtonProps {
+  id: string
+  position: [number, number, number]
+  size: number
+  currentUrl: string
+  onUrlChange: (url: string) => void
 }

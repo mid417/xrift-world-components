@@ -19,7 +19,8 @@ const LiveVideoPlayerInner = memo(
     playing: initialPlaying = true,
     volume: initialVolume = 1,
     onError,
-  }: LiveVideoPlayerProps & { url: string }) => {
+    onUrlChange,
+  }: LiveVideoPlayerProps & { url: string; onUrlChange: (url: string) => void }) => {
     const [playing, setPlaying] = useState(initialPlaying)
     const [volume, setVolume] = useState(initialVolume)
     const [isBuffering, setIsBuffering] = useState(false)
@@ -120,8 +121,10 @@ const LiveVideoPlayerInner = memo(
           playing={playing}
           volume={volume}
           isBuffering={isBuffering}
+          currentUrl={url}
           onPlayPause={handlePlayPause}
           onVolumeChange={handleVolumeChange}
+          onUrlChange={onUrlChange}
         />
       </group>
     )
@@ -136,12 +139,17 @@ export const LiveVideoPlayer = memo(
     position = DEFAULT_POSITION,
     rotation = DEFAULT_ROTATION,
     width = DEFAULT_WIDTH,
-    url,
+    url: initialUrl,
     ...props
   }: LiveVideoPlayerProps) => {
+    const [currentUrl, setCurrentUrl] = useState(initialUrl)
     const screenHeight = width * (9 / 16)
 
-    if (!url) {
+    const handleUrlChange = useCallback((newUrl: string) => {
+      setCurrentUrl(newUrl)
+    }, [])
+
+    if (!currentUrl) {
       return (
         <group position={position} rotation={rotation}>
           <mesh>
@@ -164,11 +172,13 @@ export const LiveVideoPlayer = memo(
         }
       >
         <LiveVideoPlayerInner
+          key={currentUrl}
           id={id}
           position={position}
           rotation={rotation}
           width={width}
-          url={url}
+          url={currentUrl}
+          onUrlChange={handleUrlChange}
           {...props}
         />
       </Suspense>

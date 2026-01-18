@@ -3,6 +3,7 @@ import { Text } from '@react-three/drei'
 import { PlayPauseButton } from './PlayPauseButton'
 import { VolumeControl } from './VolumeControl'
 import { LiveIndicator } from './LiveIndicator'
+import { UrlInputButton } from './UrlInputButton'
 import type { LiveControlPanelProps } from './types'
 
 const PANEL_HEIGHT = 0.15
@@ -16,8 +17,10 @@ export const ControlPanel = memo(
     playing,
     volume,
     isBuffering,
+    currentUrl,
     onPlayPause,
     onVolumeChange,
+    onUrlChange,
   }: LiveControlPanelProps) => {
     const panelY = -screenHeight / 2 - PANEL_HEIGHT / 2
     const buttonSize = PANEL_HEIGHT * BUTTON_SIZE_RATIO
@@ -30,10 +33,19 @@ export const ControlPanel = memo(
           <meshBasicMaterial color="#1a1a2a" transparent opacity={0.9} />
         </mesh>
 
+        {/* URL入力ボタン（左端） */}
+        <UrlInputButton
+          id={`${id}-url-input`}
+          position={[-width * 0.45, 0, 0.01]}
+          size={buttonSize}
+          currentUrl={currentUrl}
+          onUrlChange={onUrlChange}
+        />
+
         {/* 再生/停止ボタン（左） */}
         <PlayPauseButton
           id={`${id}-play-pause`}
-          position={[-width * 0.4, 0, 0.01]}
+          position={[-width * 0.35, 0, 0.01]}
           size={buttonSize}
           playing={playing}
           onInteract={onPlayPause}

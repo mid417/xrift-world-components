@@ -2,6 +2,7 @@ import { memo, Suspense, useState, useCallback, useEffect, useRef, Component, Re
 import { useVideoTexture, Text } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { ControlPanel } from './ControlPanel'
+import { useWebAudioVolume } from '../../hooks/useWebAudioVolume'
 import type { VideoPlayerProps } from './types'
 
 export type { VideoPlayerProps } from './types'
@@ -88,12 +89,8 @@ const VideoTexture = memo(
       }
     }, [playing, videoRef])
 
-    useEffect(() => {
-      const video = videoRef.current
-      if (!video) return
-
-      video.volume = Math.max(0, Math.min(1, volume))
-    }, [volume, videoRef])
+    // Web Audio API を使用した音量制御（iOS対応）
+    useWebAudioVolume(videoRef.current, volume)
 
     useEffect(() => {
       const video = videoRef.current
@@ -183,6 +180,14 @@ export const VideoPlayer = memo(
       setPlaying((prev) => !prev)
     }, [])
 
+    const handleStop = useCallback(() => {
+      setCurrentUrl(undefined)
+      setPlaying(false)
+      setProgress(0)
+      setDuration(0)
+      setHasError(false)
+    }, [])
+
     const handleVolumeChange = useCallback((newVolume: number) => {
       setVolume(newVolume)
     }, [])
@@ -258,6 +263,7 @@ export const VideoPlayer = memo(
           volume={volume}
           currentUrl={currentUrl || ''}
           onPlayPause={handlePlayPause}
+          onStop={handleStop}
           onSeek={handleSeek}
           onVolumeChange={handleVolumeChange}
           onUrlChange={handleUrlChange}

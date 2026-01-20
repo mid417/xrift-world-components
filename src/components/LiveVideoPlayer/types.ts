@@ -9,7 +9,7 @@ export interface LiveVideoPlayerProps {
   width?: number
   /** ライブストリームのURL（HLS .m3u8 形式） */
   url?: string
-  /** 初期再生状態（デフォルト: true） */
+  /** 初期再生状態（デフォルト: false） */
   playing?: boolean
   /** 初期音量 0〜1（デフォルト: 1） */
   volume?: number
@@ -30,6 +30,7 @@ export interface LiveControlPanelProps {
   onPlayPause: () => void
   onVolumeChange: (volume: number) => void
   onUrlChange: (url: string) => void
+  onReload: () => void
 }
 
 export interface PlayPauseButtonProps {
@@ -51,6 +52,7 @@ export interface VolumeControlProps {
 export interface LiveIndicatorProps {
   position: [number, number, number]
   size: number
+  playing: boolean
 }
 
 export interface LoadingSpinnerProps {
@@ -64,4 +66,11 @@ export interface UrlInputButtonProps {
   size: number
   currentUrl: string
   onUrlChange: (url: string) => void
+}
+
+export interface ReloadButtonProps {
+  id: string
+  position: [number, number, number]
+  size: number
+  onReload: () => void
 }

@@ -201,11 +201,6 @@ export const LiveVideoPlayer = memo(
       }
     }, []);
 
-    const handleReload = useCallback(() => {
-      setHasError(false);
-      setReloadKey((prev) => prev + 1);
-    }, []);
-
     const handlePlayPause = useCallback(() => {
       setPlaying((prev) => !prev);
     }, []);
@@ -215,6 +210,7 @@ export const LiveVideoPlayer = memo(
       setPlaying(false);
       setIsBuffering(false);
       setHasError(false);
+      setReloadKey((prev) => prev + 1);
     }, []);
 
     const handleVolumeChange = useCallback((newVolume: number) => {
@@ -303,7 +299,6 @@ export const LiveVideoPlayer = memo(
           onStop={handleStop}
           onVolumeChange={handleVolumeChange}
           onUrlChange={handleUrlChange}
-          onReload={handleReload}
         />
       </group>
     );

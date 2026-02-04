@@ -1,14 +1,26 @@
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 import { Text } from '@react-three/drei'
-import { PlayPauseButton } from './PlayPauseButton'
-import { StopButton } from '../VideoPlayer/StopButton'
-import { VolumeControl } from './VolumeControl'
+import { IconButton } from '../../../commons/IconButton'
+import { VolumeControl } from '../../../commons/VolumeControl'
+import { useTextInputContext } from '../../../../contexts/TextInputContext'
 import { LiveIndicator } from './LiveIndicator'
-import { UrlInputButton } from './UrlInputButton'
-import type { LiveControlPanelProps } from './types'
+
+interface Props {
+  id: string
+  width: number
+  screenHeight: number
+  playing: boolean
+  volume: number
+  isBuffering: boolean
+  url: string
+  onPlayPause: () => void
+  onStop: () => void
+  onVolumeChange: (volume: number) => void
+  onUrlChange: (url: string) => void
+}
 
 const PANEL_HEIGHT = 0.15
-const BUTTON_SIZE_RATIO = 0.6
+const BUTTON_SIZE = PANEL_HEIGHT * 0.6
 
 export const ControlPanel = memo(
   ({
@@ -18,14 +30,28 @@ export const ControlPanel = memo(
     playing,
     volume,
     isBuffering,
-    currentUrl,
+    url,
     onPlayPause,
     onStop,
     onVolumeChange,
     onUrlChange,
-  }: LiveControlPanelProps) => {
+  }: Props) => {
     const panelY = -screenHeight / 2 - PANEL_HEIGHT / 2
-    const buttonSize = PANEL_HEIGHT * BUTTON_SIZE_RATIO
+
+    const { requestTextInput } = useTextInputContext()
+
+    const handleUrlInput = useCallback(() => {
+      requestTextInput({
+        id: `${id}-url-input`,
+        placeholder: 'ライブストリームのURLを入力',
+        initialValue: url,
+        onSubmit: (value) => {
+          if (value && value.trim() !== '') {
+            onUrlChange(value.trim())
+          }
+        },
+      })
+    }, [id, url, onUrlChange, requestTextInput])
 
     return (
       <group position={[0, panelY, 0]}>
@@ -36,33 +62,37 @@ export const ControlPanel = memo(
         </mesh>
 
         {/* URL入力ボタン（左端） */}
-        <UrlInputButton
+        <IconButton
           id={`${id}-url-input`}
           position={[-width * 0.45, 0, 0.01]}
-          size={buttonSize}
-          currentUrl={currentUrl}
-          onUrlChange={onUrlChange}
+          size={BUTTON_SIZE}
+          icon="🔗"
+          interactionText="URL変更"
+          onInteract={handleUrlInput}
         />
 
         {/* 再生/一時停止ボタン */}
-        <PlayPauseButton
+        <IconButton
           id={`${id}-play-pause`}
           position={[-width * 0.38, 0, 0.01]}
-          size={buttonSize}
-          playing={playing}
+          size={BUTTON_SIZE}
+          icon={playing ? "||" : "▶"}
+          interactionText={playing ? "一時停止" : "再生"}
           onInteract={onPlayPause}
         />
 
         {/* 停止ボタン */}
-        <StopButton
+        <IconButton
           id={`${id}-stop`}
           position={[-width * 0.31, 0, 0.01]}
-          size={buttonSize}
+          size={BUTTON_SIZE}
+          icon="■"
+          interactionText="停止"
           onInteract={onStop}
         />
 
         {/* LIVEインジケータ（中央） */}
-        <LiveIndicator position={[0, 0, 0.01]} size={buttonSize} playing={playing} />
+        <LiveIndicator position={[0, 0, 0.01]} size={BUTTON_SIZE} playing={playing} />
 
         {/* バッファリング中のテキスト */}
         {isBuffering && (
@@ -81,7 +111,7 @@ export const ControlPanel = memo(
         <VolumeControl
           id={`${id}-volume`}
           position={[width * 0.4, 0, 0.01]}
-          size={buttonSize}
+          size={BUTTON_SIZE}
           volume={volume}
           onVolumeChange={onVolumeChange}
         />

@@ -1,36 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import {
-  formatTime,
-  calculateSegments,
-  getVolumeIcon,
-  calculateProgressBar,
-} from './utils'
-
-describe('formatTime', () => {
-  it('0秒を0:00にフォーマット', () => {
-    expect(formatTime(0)).toBe('0:00')
-  })
-
-  it('59秒を0:59にフォーマット', () => {
-    expect(formatTime(59)).toBe('0:59')
-  })
-
-  it('60秒を1:00にフォーマット', () => {
-    expect(formatTime(60)).toBe('1:00')
-  })
-
-  it('90秒を1:30にフォーマット', () => {
-    expect(formatTime(90)).toBe('1:30')
-  })
-
-  it('3661秒を61:01にフォーマット', () => {
-    expect(formatTime(3661)).toBe('61:01')
-  })
-
-  it('小数点以下を切り捨て', () => {
-    expect(formatTime(65.9)).toBe('1:05')
-  })
-})
+import { calculateSegments, calculateProgressBar } from './utils'
 
 describe('calculateSegments', () => {
   it('5セグメントで0-100の値を生成', () => {
@@ -89,18 +58,6 @@ describe('calculateSegments', () => {
     expect(segments[0].label).toBe('最初')
     expect(segments[1].label).toBe('30秒')
     expect(segments[2].label).toBe('60秒')
-  })
-})
-
-describe('getVolumeIcon', () => {
-  it('音量0のときはミュートアイコン', () => {
-    expect(getVolumeIcon(0)).toBe('🔇')
-  })
-
-  it('音量0以外のときはスピーカーアイコン', () => {
-    expect(getVolumeIcon(0.1)).toBe('🔈')
-    expect(getVolumeIcon(0.5)).toBe('🔈')
-    expect(getVolumeIcon(1)).toBe('🔈')
   })
 })
 

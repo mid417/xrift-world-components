@@ -9,6 +9,16 @@ import {
   type ConfirmContextValue,
 } from './ConfirmContext'
 import {
+  InstanceProvider,
+  createDefaultInstanceImplementation,
+  type InstanceContextValue,
+} from './InstanceContext'
+import {
+  WorldProvider,
+  createDefaultWorldImplementation,
+  type WorldContextValue,
+} from './WorldContext'
+import {
   TeleportProvider,
   createDefaultTeleportImplementation,
   type TeleportContextValue,
@@ -88,6 +98,11 @@ interface Props {
    */
   confirmImplementation?: ConfirmContextValue
   /**
+   * インスタンス情報取得・遷移の実装（オプション）
+   * 指定しない場合はデフォルト実装（console.log）が使用される
+   */
+  instanceImplementation?: InstanceContextValue
+  /**
    * テレポート機能の実装（オプション）
    * 指定しない場合はデフォルト実装（console.log）が使用される
    */
@@ -102,6 +117,11 @@ interface Props {
    * 指定しない場合はデフォルト実装（空の状態）が使用される
    */
   usersImplementation?: UsersContextValue
+  /**
+   * ワールド情報取得の実装（オプション）
+   * 指定しない場合はデフォルト実装（console.log）が使用される
+   */
+  worldImplementation?: WorldContextValue
   /**
    * ワールドイベントの実装（オプション）
    * 指定しない場合はデフォルト実装（ローカル EventEmitter）が使用される
@@ -119,11 +139,13 @@ export const XRiftProvider = ({
   baseUrl,
   confirmImplementation,
   instanceStateImplementation,
+  instanceImplementation,
   screenShareImplementation,
   spawnPointImplementation,
   teleportImplementation,
   textInputImplementation,
   usersImplementation,
+  worldImplementation,
   worldEventImplementation,
   children,
 }: Props) => {
@@ -146,6 +168,18 @@ export const XRiftProvider = ({
   const confirmImpl = useMemo(
     () => confirmImplementation ?? createDefaultConfirmImplementation(),
     [confirmImplementation],
+  )
+
+  // インスタンス情報の実装（指定がない場合はデフォルト実装を使用）
+  const instanceImpl = useMemo(
+    () => instanceImplementation ?? createDefaultInstanceImplementation(),
+    [instanceImplementation],
+  )
+
+  // ワールド情報の実装（指定がない場合はデフォルト実装を使用）
+  const worldImpl = useMemo(
+    () => worldImplementation ?? createDefaultWorldImplementation(),
+    [worldImplementation],
   )
 
   // テレポートの実装（指定がない場合はデフォルト実装を使用）
@@ -187,7 +221,11 @@ export const XRiftProvider = ({
                 <WorldEventProvider value={worldEventImpl}>
                   <TeleportProvider value={teleportImpl}>
                     <ConfirmProvider value={confirmImpl}>
-                      {children}
+                      <WorldProvider value={worldImpl}>
+                        <InstanceProvider value={instanceImpl}>
+                          {children}
+                        </InstanceProvider>
+                      </WorldProvider>
                     </ConfirmProvider>
                   </TeleportProvider>
                 </WorldEventProvider>

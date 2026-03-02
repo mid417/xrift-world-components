@@ -54,6 +54,24 @@ export {
 } from './contexts/ConfirmContext'
 
 export {
+  InstanceContext,
+  InstanceProvider,
+  useInstanceContext,
+  createDefaultInstanceImplementation,
+  type InstanceContextValue,
+  type InstanceInfo,
+} from './contexts/InstanceContext'
+
+export {
+  WorldContext,
+  WorldProvider,
+  useWorldContext,
+  createDefaultWorldImplementation,
+  type WorldContextValue,
+  type WorldInfo,
+} from './contexts/WorldContext'
+
+export {
   TeleportContext,
   TeleportProvider,
   useTeleportContext,
@@ -126,6 +144,8 @@ export {
   type EntryLogBoardProps,
 } from './components/EntryLogBoard'
 
+export { Portal, type PortalProps } from './components/Portal'
+
 export { type PhysicsConfig } from './components/DevEnvironment/types'
 
 // Hooks
@@ -133,6 +153,8 @@ export { useInstanceState } from './hooks/useInstanceState'
 export { useSpawnPoint } from './hooks/useSpawnPoint'
 export { useConfirm } from './hooks/useConfirm'
 export { useTeleport } from './hooks/useTeleport'
+export { useInstance } from './hooks/useInstance'
+export { useWorld } from './hooks/useWorld'
 export { useWebAudioVolume } from './hooks/useWebAudioVolume'
 export { useWorldEvent } from './hooks/useWorldEvent'
 

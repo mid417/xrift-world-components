@@ -1,47 +1,31 @@
 import { useFrame } from '@react-three/fiber'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
-
-/**
- * object-fit: contain 用の映像サイズを計算
- */
-const calculateContainSize = (
-  videoWidth: number,
-  videoHeight: number,
-  screenWidth: number,
-  screenHeight: number,
-): [number, number] => {
-  const videoAspect = videoWidth / videoHeight
-  const screenAspect = screenWidth / screenHeight
-
-  if (videoAspect > screenAspect) {
-    // 映像が横長 → 幅に合わせて高さを調整
-    return [screenWidth, screenWidth / videoAspect]
-  } else {
-    // 映像が縦長 → 高さに合わせて幅を調整
-    return [screenHeight * videoAspect, screenHeight]
-  }
-}
+import { calculateContainSize } from './utils'
 
 /**
  * VideoElement から VideoTexture を作成し管理するフック
  * @param videoElement 映像のvideo要素
  * @param screenSize スクリーンのサイズ [幅, 高さ]
+ * @param targetFps テクスチャ更新のフレームレート上限（省略時は制限なし）
  */
 export const useVideoTexture = (
   videoElement: HTMLVideoElement | null,
   screenSize: [number, number],
+  targetFps?: number,
 ) => {
-  const materialRef = useRef<THREE.MeshBasicMaterial>(null)
   const [texture, setTexture] = useState<THREE.VideoTexture | null>(null)
-  const [videoSize, setVideoSize] = useState<[number, number]>(screenSize)
+  const [videoResolution, setVideoResolution] = useState<
+    [number, number] | null
+  >(null)
+  const lastUpdateRef = useRef(0)
   const hasVideo = texture !== null
 
-  // VideoTextureの作成と更新
+  // VideoTextureの作成（videoElement のみに依存）
   useEffect(() => {
     if (!videoElement) {
       setTexture(null)
-      setVideoSize(screenSize)
+      setVideoResolution(null)
       return
     }
 
@@ -49,18 +33,11 @@ export const useVideoTexture = (
     videoTexture.minFilter = THREE.LinearFilter
     videoTexture.magFilter = THREE.LinearFilter
     videoTexture.colorSpace = THREE.SRGBColorSpace
-    videoTexture.needsUpdate = true
     setTexture(videoTexture)
 
-    // 映像のメタデータがロードされたらサイズを計算
+    // 映像のメタデータがロードされたら解像度を記録
     const handleLoadedMetadata = () => {
-      const size = calculateContainSize(
-        videoElement.videoWidth,
-        videoElement.videoHeight,
-        screenSize[0],
-        screenSize[1],
-      )
-      setVideoSize(size)
+      setVideoResolution([videoElement.videoWidth, videoElement.videoHeight])
     }
 
     if (videoElement.videoWidth > 0) {
@@ -73,38 +50,53 @@ export const useVideoTexture = (
       videoElement.removeEventListener('loadedmetadata', handleLoadedMetadata)
       videoTexture.dispose()
     }
-  }, [videoElement, screenSize])
+  }, [videoElement])
 
-  // マテリアルにテクスチャをセット
-  useEffect(() => {
-    if (!materialRef.current || !texture) return
-    materialRef.current.map = texture
-    materialRef.current.needsUpdate = true
-  }, [texture])
-
-  // テクスチャ更新（毎フレーム）
+  // targetFps 指定時: VideoTexture の自動更新を間引く
+  // VideoTexture は rVFC で毎ビデオフレーム source.needsUpdate = true を設定する。
+  // useFrame は gl.render() の直前に実行されるため、間隔内の更新を抑制できる。
   useFrame(() => {
-    if (!texture) return
-    texture.needsUpdate = true
+    if (!texture || !targetFps) return
+    const now = performance.now()
+    if (now - lastUpdateRef.current < 1000 / targetFps) {
+      texture.source.needsUpdate = false
+    } else {
+      lastUpdateRef.current = now
+    }
   })
 
-  // video要素が一時停止していたら再生を試みる
+  // 映像サイズの計算（screenSize や videoResolution の変更時のみ再計算）
+  const videoSize = useMemo<[number, number]>(() => {
+    if (!videoResolution) return screenSize
+    return calculateContainSize(
+      videoResolution[0],
+      videoResolution[1],
+      screenSize[0],
+      screenSize[1],
+    )
+  }, [videoResolution, screenSize])
+
+  // video要素が一時停止したら自動で再生を試みる
   useEffect(() => {
     if (!videoElement) return
 
-    const checkAndPlay = () => {
-      if (videoElement.paused) {
-        videoElement.play().catch(() => {
-          // 再生失敗は無視
-        })
-      }
+    const handlePause = () => {
+      videoElement.play().catch(() => {
+        // 再生失敗は無視
+      })
     }
 
-    checkAndPlay()
-    const interval = setInterval(checkAndPlay, 1000)
+    // 初回チェック
+    if (videoElement.paused) {
+      handlePause()
+    }
 
-    return () => clearInterval(interval)
+    videoElement.addEventListener('pause', handlePause)
+
+    return () => {
+      videoElement.removeEventListener('pause', handlePause)
+    }
   }, [videoElement])
 
-  return { texture, hasVideo, materialRef, videoSize }
+  return { texture, hasVideo, videoSize }
 }

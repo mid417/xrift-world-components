@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { RigidBody } from '@react-three/rapier'
 import { DevEnvironment } from '../src/components/DevEnvironment'
+import { SpawnPoint } from '../src/components/SpawnPoint'
 import { TextInputProvider, createDefaultTextInputImplementation } from '../src/contexts/TextInputContext'
 import { TestScene } from '../src/scenes/TestScene'
 
@@ -11,7 +12,7 @@ function Floor() {
     <RigidBody type="fixed">
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[50, 50]} />
-        <meshStandardMaterial color="#444444" />
+        <meshStandardMaterial color="#444444" transparent opacity={0} />
       </mesh>
     </RigidBody>
   )
@@ -24,6 +25,7 @@ function App() {
       <directionalLight position={[5, 10, 5]} intensity={1} castShadow />
       <TextInputProvider value={textInput}>
         <Floor />
+        <SpawnPoint position={[5, 0, 5]} yaw={180} />
         <TestScene />
       </TextInputProvider>
     </DevEnvironment>

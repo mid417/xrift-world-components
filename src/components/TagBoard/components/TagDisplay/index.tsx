@@ -12,10 +12,10 @@
  * - instanceStateKey: インスタンス状態キーの識別子
  */
 import { useMemo, useRef } from "react";
-import { Billboard } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { type Group, DoubleSide, Vector3 } from "three";
 
+import { BillboardY } from "../../../BillboardY";
 import { useInstanceState } from "../../../../hooks/useInstanceState";
 import { TagChip } from "../TagChip";
 import { type TagDisplayProps } from "../../types";
@@ -25,11 +25,16 @@ import {
   groupTagsByColumn,
 } from "./utils";
 
-const HEAD_OFFSET_Y = 2.6;
+/** アバター頭上のタグ表示マージン（メートル）
+ * NameTag（avatarHeight * 1.05 + 0.15）やアイコンと被らないよう十分な余裕を持たせる */
+const TAG_MARGIN_Y = 0.65;
+/** getAvatarHeight が未提供時のフォールバック高さ */
+const DEFAULT_HEIGHT = 1.5;
 
 export const TagDisplay = ({
   userId,
   getMovement,
+  getAvatarHeight,
   tags,
   visible,
   instanceStateKey,
@@ -64,10 +69,14 @@ export const TagDisplay = ({
       return;
     }
 
+    // アバター高さからオフセットを算出
+    const avatarHeight = getAvatarHeight?.(userId);
+    const headOffsetY = (avatarHeight?.height ?? DEFAULT_HEIGHT) + TAG_MARGIN_Y;
+
     // ワールド座標
     const worldPos = new Vector3(
       movement.position.x,
-      movement.position.y + HEAD_OFFSET_Y,
+      movement.position.y + headOffsetY,
       movement.position.z,
     );
 
@@ -86,11 +95,11 @@ export const TagDisplay = ({
   if (selectedTags.length === 0 || !visible) return null;
 
   return (
-    <group ref={groupRef} visible={false} scale={[0.5, 0.5, 0.5]}>
-      <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
+    <group ref={groupRef} visible={false} scale={[0.75, 0.75, 0.75]}>
+      <BillboardY>
         <group>
           {/* 背景: 半透明の黒背景 */}
-          <mesh position={[0, (-(layout.maxRows - 1) * layout.tagHeight) / 2, -0.02]}>
+          <mesh position={[0, ((layout.maxRows - 1) * layout.tagHeight) / 2, -0.02]}>
             <planeGeometry
               args={[layout.totalWidth + 0.1, layout.maxRows * layout.tagHeight + 0.1]}
             />
@@ -102,13 +111,13 @@ export const TagDisplay = ({
             />
           </mesh>
 
-          {/* タグを配置 */}
+          {/* タグを配置（下から上に積む） */}
           {activeColumns.map(([columnIndex, columnTags], activeColIndex) => {
             const xPos =
               (activeColIndex - (activeColumns.length - 1) / 2) * layout.columnSpacing;
 
             return columnTags.map((tag, rowIndex) => {
-              const yOffset = -rowIndex * (layout.tagHeight + layout.tagSpacing);
+              const yOffset = rowIndex * (layout.tagHeight + layout.tagSpacing);
 
               return (
                 <TagChip
@@ -124,7 +133,7 @@ export const TagDisplay = ({
             });
           })}
         </group>
-      </Billboard>
+      </BillboardY>
     </group>
   );
 };

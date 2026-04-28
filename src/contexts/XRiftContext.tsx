@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
+import React, { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react'
 import type { Object3D } from 'three'
 import { InstanceStateProvider, type InstanceStateContextValue } from './InstanceStateContext'
 import { ScreenShareProvider, type ScreenShareContextValue } from './ScreenShareContext'
@@ -45,6 +45,11 @@ import {
   createDefaultAudioVolumeImplementation,
   type AudioVolumeContextValue,
 } from './AudioVolumeContext'
+import {
+  SharedFileProvider,
+  createDefaultSharedFileImplementation,
+  type SharedFileContextValue,
+} from './SharedFileContext'
 
 // デフォルトの画面共有実装（開発環境用）
 const createDefaultScreenShareImplementation = (): ScreenShareContextValue => ({
@@ -149,6 +154,11 @@ interface Props {
    */
   fileInputImplementation?: FileInputContextValue
   /**
+   * 共有ファイルの実装（オプション）
+   * 指定しない場合はデフォルト実装（console.log）が使用される
+   */
+  sharedFileImplementation?: SharedFileContextValue
+  /**
    * アイテムの配置状態（オプション）
    * 'preview': プレビュー中、'placed': 設置済み
    * 指定しない場合は Provider をスキップ（フォールバックで 'placed' が返る）
@@ -156,6 +166,19 @@ interface Props {
   placementMode?: PlacementMode
   children: ReactNode
 }
+
+/**
+ * Provider の配列を合成して単一のラッパーを返す
+ * 波動拳ネストを平坦なリストに変換する
+ */
+const composeProviders = (
+  providers: Array<[React.ComponentType<any>, Record<string, unknown>]>,
+  children: ReactNode,
+): ReactNode =>
+  providers.reduceRight<ReactNode>(
+    (acc, [Provider, props]) => <Provider {...props}>{acc}</Provider>,
+    children,
+  )
 
 /**
  * XRift ワールドの情報を提供するContextProvider
@@ -176,6 +199,7 @@ export const XRiftProvider = ({
   instanceEventImplementation,
   audioVolumeImplementation,
   fileInputImplementation,
+  sharedFileImplementation,
   placementMode,
   children,
 }: Props) => {
@@ -236,6 +260,12 @@ export const XRiftProvider = ({
     [fileInputImplementation],
   )
 
+  // 共有ファイルの実装（指定がない場合はデフォルト実装を使用）
+  const sharedFileImpl = useMemo(
+    () => sharedFileImplementation ?? createDefaultSharedFileImplementation(),
+    [sharedFileImplementation],
+  )
+
   // オブジェクトの登録
   const registerInteractable = useCallback((object: Object3D) => {
     interactableObjects.add(object)
@@ -253,39 +283,29 @@ export const XRiftProvider = ({
     unregisterInteractable,
   }), [baseUrl, interactableObjects, registerInteractable, unregisterInteractable])
 
+  const providers: Array<[React.ComponentType<any>, Record<string, unknown>]> = [
+    [ScreenShareProvider, { value: screenShareImpl }],
+    [TextInputProvider, { value: textInputImpl }],
+    [FileInputProvider, { value: fileInputImpl }],
+    [SharedFileProvider, { value: sharedFileImpl }],
+    [InstanceStateProvider, { implementation: instanceStateImplementation }],
+    [SpawnPointProvider, { implementation: spawnPointImplementation }],
+    [UsersProvider, { implementation: usersImplementation }],
+    [InstanceEventProvider, { value: instanceEventImpl }],
+    [TeleportProvider, { value: teleportImpl }],
+    [ConfirmProvider, { value: confirmImpl }],
+    [WorldProvider, { value: worldImpl }],
+    [InstanceProvider, { value: instanceImpl }],
+    [AudioVolumeProvider, { value: audioVolumeImpl }],
+  ]
+
+  if (placementMode) {
+    providers.push([PlacementStateProvider, { mode: placementMode }])
+  }
+
   return (
     <XRiftContext.Provider value={xriftContextValue}>
-      <ScreenShareProvider value={screenShareImpl}>
-        <TextInputProvider value={textInputImpl}>
-          <FileInputProvider value={fileInputImpl}>
-            <InstanceStateProvider implementation={instanceStateImplementation}>
-              <SpawnPointProvider implementation={spawnPointImplementation}>
-                <UsersProvider implementation={usersImplementation}>
-                  <InstanceEventProvider value={instanceEventImpl}>
-                    <TeleportProvider value={teleportImpl}>
-                      <ConfirmProvider value={confirmImpl}>
-                        <WorldProvider value={worldImpl}>
-                          <InstanceProvider value={instanceImpl}>
-                            <AudioVolumeProvider value={audioVolumeImpl}>
-                              {placementMode ? (
-                                <PlacementStateProvider mode={placementMode}>
-                                  {children}
-                                </PlacementStateProvider>
-                              ) : (
-                                children
-                              )}
-                            </AudioVolumeProvider>
-                          </InstanceProvider>
-                        </WorldProvider>
-                      </ConfirmProvider>
-                    </TeleportProvider>
-                  </InstanceEventProvider>
-                </UsersProvider>
-              </SpawnPointProvider>
-            </InstanceStateProvider>
-          </FileInputProvider>
-        </TextInputProvider>
-      </ScreenShareProvider>
+      {composeProviders(providers, children)}
     </XRiftContext.Provider>
   )
 }
